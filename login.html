@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; connect-src 'self'">
+    <title>MelodyCloud | Admin Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="icon" href="assets/images/favicon.png" type="image/png">
+    <style>
+        .reset-password-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0;
+            margin-top: 1rem;
+            display: block;
+            width: 100%;
+            text-align: center;
+            transition: color 0.3s;
+        }
+        
+        .reset-password-btn:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+    </button>
+    
+    <div class="login-container">
+        <div class="login-blob blob-1"></div>
+        <div class="login-blob blob-2"></div>
+        
+        <div class="login-card glass-card">
+            <div class="login-header">
+                <i class="fas fa-cloud-music login-logo"></i>
+                <h1>MelodyCloud Admin</h1>
+                <p>Please sign in to continue</p>
+                
+                <?php if (isset($_GET['error'])): ?>
+                <div class="error-message">
+                    Invalid credentials. Please try again.
+                </div>
+                <?php endif; ?>
+            </div>
+            
+            <form id="login-form" action="includes/auth.php" method="POST" autocomplete="off">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> Username</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                </div>
+                
+                <input type="hidden" name="csrf_token" id="csrf_token" value="">
+                
+                <button type="submit" class="login-btn">
+                    <span>Sign In</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                
+                <div class="login-footer">
+                    <a href="reset.html" class="reset-password-btn">Forgot Password? Reset Here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Remove any code that fetches or sets CSRF tokens in the login form or via JavaScript
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate & Author | MelodyCloud</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/images/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        .author-cursive {
+            font-family: 'Pacifico', 'Great Vibes', cursive, sans-serif;
+            font-size: 2.2rem;
+            color: var(--accent-color);
+            text-shadow: 0 2px 8px #ff9ff3aa;
+        }
+        .donate-card {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .qr-img {
+            margin: 1.5rem auto;
+            width: 180px;
+            height: 180px;
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 2px 16px #5f27cd22;
+        }
+        .donate-btn {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            padding: 0.7rem 2rem;
+            border-radius: 12px;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-family: 'Pacifico', cursive, sans-serif;
+            transition: background 0.2s;
+        }
+        .donate-btn:hover {
+            background: var(--accent-color);
+        }
+        .fam-id {
+            font-family: 'Great Vibes', cursive, sans-serif;
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-top: 1rem;
+        }
+        .theme-toggle {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--accent-color);
+            transition: color 0.2s;
+        }
+        .theme-toggle:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+    </button>
+    <div class="donate-card glass-card">
+        <h1 class="author-cursive">MelodyCloud Author</h1>
+        <p class="author-cursive" style="font-size:1.5rem;">cyberghost</p>
+        <p style="margin-bottom:1.2rem;"><a href="https://sahil-portfolio.infy.uk/" target="_blank" rel="noopener" style="color:var(--primary-color);font-weight:bold;font-size:1.1rem;">Portfolio Website</a></p>
+        <p style="font-family:'Great Vibes',cursive;font-size:1.2rem;">WebDev • App Dev • Cybersecurity • Ethical Hacker</p>
+        <h2 style="margin-top:2rem;">Support the Project</h2>
+        <div class="qr-img">
+            <img src="assets/images/fampay-qr.png" alt="FamPay QR Code" style="width:100%;height:100%;object-fit:contain;"/>
+        </div>
+        <div class="fam-id" id="fam-id">FamPay: 9236011573@fam <button id="copy-fam" title="Copy"><i class="fas fa-copy"></i></button></div>
+        <button class="donate-btn" id="donate-btn">Donate via FamPay</button>
+        <div class="share-row" style="margin-top:1.5rem;">
+            <span style="font-family:'Pacifico',cursive;font-size:1.1rem;">Share:</span>
+            <button class="share-btn" id="share-btn"><i class="fas fa-share-alt"></i></button>
+        </div>
+        <div id="donate-thankyou" style="display:none;margin-top:2rem;font-size:1.3rem;" class="author-cursive">Thank you for your support! <span class="sparkle">💖</span></div>
+        <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:999;display:none;"></canvas>
+        <p style="margin-top:2rem;font-size:1.1rem;opacity:0.7;">Thank you for supporting open-source music and cute web apps! <span class="sparkle">💖</span></p>
+    </div>
+    <script>
+    // Dark theme toggle
+    const toggleBtn = document.getElementById('theme-toggle');
+    const icon = toggleBtn.querySelector('i');
+    function setTheme(dark) {
+        if (dark) {
+            document.body.classList.add('dark-theme');
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        } else {
+            document.body.classList.remove('dark-theme');
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        }
+    }
+    toggleBtn.addEventListener('click', () => {
+        const isDark = !document.body.classList.contains('dark-theme');
+        setTheme(isDark);
+        localStorage.setItem('melodycloud_theme', isDark ? 'dark' : 'light');
+    });
+    // On load
+    setTheme(localStorage.getItem('melodycloud_theme') === 'dark');
+    // Copy to clipboard
+    document.getElementById('copy-fam').onclick = function() {
+        navigator.clipboard.writeText('9236011573@fam');
+        this.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(()=>{this.innerHTML='<i class="fas fa-copy"></i>';},1200);
+    };
+    // Social share
+    document.getElementById('share-btn').onclick = function() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'Donate to MelodyCloud',
+                text: 'Support MelodyCloud and cyberghost! FamPay: 9236011573@fam',
+                url: window.location.href
+            });
+        } else {
+            alert('Share this: 9236011573@fam');
+        }
+    };
+    // Donate button
+    document.getElementById('donate-btn').onclick = function() {
+        window.open('upi://pay?pa=9236011573@fam&pn=cyberghost&cu=INR','_blank');
+        document.getElementById('donate-thankyou').style.display = 'block';
+        launchConfetti();
+    };
+    // Confetti animation
+    function launchConfetti() {
+        const canvas = document.getElementById('confetti-canvas');
+        canvas.style.display = 'block';
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let confetti = [];
+        for (let i = 0; i < 120; i++) {
+            confetti.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * -canvas.height,
+                r: Math.random() * 8 + 4,
+                d: Math.random() * 40 + 10,
+                color: `hsl(${Math.random()*360},90%,70%)`,
+                tilt: Math.random() * 10 - 10
+            });
+        }
+        let angle = 0;
+        function draw() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            angle += 0.01;
+            for (let i = 0; i < confetti.length; i++) {
+                let c = confetti[i];
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
+                ctx.fillStyle = c.color;
+                ctx.fill();
+                c.y += Math.cos(angle + c.d) + 2 + c.r/2;
+                c.x += Math.sin(angle) * 2;
+                if (c.y > canvas.height) {
+                    confetti[i] = {x: Math.random()*canvas.width, y: -10, r: c.r, d: c.d, color: c.color, tilt: c.tilt};
+                }
+            }
+            requestAnimationFrame(draw);
+        }
+        draw();
+        setTimeout(()=>{canvas.style.display='none';}, 3500);
+    }
+    </script>
+</body>
+</html> 

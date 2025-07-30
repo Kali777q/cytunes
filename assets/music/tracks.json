@@ -1,0 +1,29 @@
+[
+    {
+        "id": "6888957a32a58",
+        "title": "goku",
+        "artist": "Akira toriyama",
+        "description": "ui",
+        "url": "assets/uploads/music/track_6888957a31d529.08422179.mp3",
+        "cover": "assets/uploads/covers/cover_6888957a328ef7.69360964.jpg",
+        "upload_date": "2025-07-29 09:33:46"
+    },
+    {
+        "id": "6888c0abe8b3e",
+        "title": "ice cream song",
+        "artist": "anime girl",
+        "description": "anime",
+        "url": "assets/uploads/music/track_6888c0abe700a4.09951892.mp3",
+        "cover": "assets/uploads/covers/cover_6888c0abe88790.99494505.jpg",
+        "upload_date": "2025-07-29 12:38:03"
+    },
+    {
+        "id": "6888c2e8d787b",
+        "title": "Wake up",
+        "artist": "Man",
+        "description": "Hehe",
+        "url": "assets/uploads/music/track_6888c2e8d6bf79.13467139.mp3",
+        "cover": "assets/uploads/covers/cover_6888c2e8d75385.16551478.jpg",
+        "upload_date": "2025-07-29 12:47:36"
+    }
+]

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MelodyCloud | Adorable Music Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/images/favicon.png" type="image/png">
+    <style>
+        /* Additional styles for new elements */
+        .refresh-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .refresh-btn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .refresh-btn i {
+            transition: transform 0.3s ease;
+        }
+        
+        .refresh-btn:hover i {
+            transform: rotate(180deg);
+        }
+        
+        .search-bar {
+            display: flex;
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        
+        #search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 30px 0 0 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 16px;
+        }
+        
+        .search-btn {
+            padding: 0 20px;
+            border: none;
+            border-radius: 0 30px 30px 0;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            background: linear-gradient(135deg, #ff8e53, #ff6b6b);
+        }
+        
+        .song-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .song-card.playing {
+            box-shadow: 0 0 15px rgba(255, 105, 107, 0.7);
+        }
+
+        /* Redesigned player styles */
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 1rem;
+        }
+
+        .song-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .album-cover {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .song-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .song-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .song-artist {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .control-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            font-size: 1.4rem;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            width: 100%;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 3px;
+            position: relative;
+            transition: width 0.1s linear;
+        }
+
+        .time-display {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+
+        .volume-control i {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .volume-slider {
+            flex: 1;
+            height: 4px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .active {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+    </button>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="blob blob-4"></div>
+    </div>
+    
+    <header class="glass-header animated-header">
+        <div class="logo">
+            <i class="fas fa-cloud-music fa-bounce"></i>
+            <h1>MelodyCloud <span class="sparkle">✨</span></h1>
+        </div>
+        <nav>
+            <a href="donate.html" class="nav-link" data-section="donate">Donate & Author</a>
+            <a href="login.html" class="login-btn">Admin Login</a>
+        </nav>
+        <button class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <main>
+        <section class="hero glass-card animated-card">
+            <div class="hero-content">
+                <h2>Discover <span class="highlight">Adorable</span> Tunes <span class="sparkle">🎵</span></h2>
+                <p>Stream the cutest music collection in the cloud</p>
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search for songs...">
+                    <button class="search-btn" id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="hero-illustration">
+                <img src="assets/images/music-cat.png" alt="Cute cat with headphones" class="animated-illustration">
+            </div>
+        </section>
+
+        <section class="music-player glass-card animated-card">
+            <div class="player-controls">
+                <div class="song-info">
+                    <img src="assets/images/default-cover.png" alt="Album cover" class="album-cover">
+                    <div class="song-details">
+                        <h3 class="song-title">Select a song</h3>
+                        <p class="song-artist">Artist</p>
+                    </div>
+                </div>
+                <div class="player-buttons">
+                    <button class="control-btn shuffle-btn" aria-label="Shuffle">
+                        <i class="fas fa-random"></i>
+                    </button>
+                    <button class="control-btn prev-btn" aria-label="Previous">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button class="control-btn play-btn pulse" aria-label="Play/Pause">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="control-btn next-btn" aria-label="Next">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                    <button class="control-btn repeat-btn" aria-label="Repeat">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+                <div class="progress-container">
+                    <span class="time-display current-time">0:00</span>
+                    <div class="progress-bar">
+                        <div class="progress"></div>
+                    </div>
+                    <span class="time-display duration">0:00</span>
+                </div>
+                <div class="volume-control">
+                    <i class="fas fa-volume-down"></i>
+                    <input type="range" min="0" max="100" value="80" class="volume-slider">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+            </div>
+            <audio id="audio-player"></audio>
+        </section>
+
+        <section class="music-library">
+            <h2 class="section-title">Latest Tracks <span class="sparkle">💖</span></h2>
+            <div class="song-grid" id="song-grid">
+                <!-- Songs will be loaded dynamically -->
+                <div class="loading-tracks">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading music library...</p>
+                </div>
+            </div>
+            <div class="refresh-container">
+                <button id="refresh-btn" class="refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Refresh Library
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="glass-footer animated-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>MelodyCloud <span class="sparkle">☁️</span></h3>
+                <p>The cutest music platform in the cloud</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="donate.html">Donate & Author</a></li>
+                    <li><a href="login.html">Admin</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="cookie.html">Cookie Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 MelodyCloud. All rights reserved. <span class="sparkle">🌈</span></p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/player.js"></script>
+    <script>
+        // Additional initialization for mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const nav = document.querySelector('header nav');
+            
+            if (menuToggle && nav) {
+                menuToggle.addEventListener('click', function() {
+                    nav.classList.toggle('active');
+                    menuToggle.querySelector('i').classList.toggle('fa-bars');
+                    menuToggle.querySelector('i').classList.toggle('fa-times');
+                });
+            }
+            
+            // Search functionality
+            const searchBtn = document.getElementById('search-btn');
+            const searchInput = document.getElementById('search-input');
+            
+            if (searchBtn && searchInput) {
+                searchBtn.addEventListener('click', function() {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    if (searchTerm) {
+                        const filteredTracks = tracks.filter(track => 
+                            track.title.toLowerCase().includes(searchTerm) || 
+                            track.artist.toLowerCase().includes(searchTerm)
+                        );
+                        renderSongGrid(filteredTracks);
+                    }
+                });
+                
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchBtn.click();
+                    }
+                });
+            }
+            
+            // Refresh button
+            const refreshBtn = document.getElementById('refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    loadTrackList();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

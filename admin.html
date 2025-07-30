@@ -1,0 +1,209 @@
+<?php
+session_start();
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    header('Location: login.html');
+    exit;
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MelodyCloud | Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="icon" href="assets/images/favicon.png" type="image/png">
+</head>
+<body>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+    </button>
+    <div class="admin-container">
+        <aside class="admin-sidebar glass-card animated-sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-cloud-music fa-bounce"></i>
+                <h2>MelodyCloud <span class="sparkle">☁️</span></h2>
+                <p>Admin Dashboard</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="upload">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload Music</span>
+                </a>
+                <a href="#" class="nav-item" data-section="manage">
+                    <i class="fas fa-music"></i>
+                    <span>Manage Tracks</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="/includes/logout.php" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+        
+        <main class="admin-main animated-main">
+            <header class="admin-header glass-card animated-header">
+                <h1 id="admin-section-title">Upload Music <span class="sparkle">🎶</span></h1>
+                <div class="admin-user">
+                    <img src="assets/images/admin-avatar.png" alt="Admin Avatar" class="animated-avatar">
+                    <span>cyberghost</span>
+                </div>
+            </header>
+            
+            <section class="admin-content active" id="upload-section">
+                <div class="upload-card glass-card animated-card">
+                    <div class="upload-header">
+                        <i class="fas fa-cloud-upload-alt fa-bounce"></i>
+                        <h3>Upload New Track <span class="sparkle">✨</span></h3>
+                        <p>Supported formats: MP3 (audio), JPG/PNG (cover art)</p>
+                    </div>
+                    
+                    <form id="upload-form" action="includes/upload.php" method="POST" enctype="multipart/form-data">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="song-title">Song Title</label>
+                                <input type="text" id="song-title" name="title" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="artist-name">Artist Name</label>
+                                <input type="text" id="artist-name" name="artist" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="song-description">Description (Optional)</label>
+                            <textarea id="song-description" name="song_description" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group file-upload">
+                                <label for="audio-file">
+                                    <i class="fas fa-file-audio"></i>
+                                    <span>Choose Audio File (MP3)</span>
+                                    <input type="file" id="audio-file" name="track" accept=".mp3" required>
+                                </label>
+                                <div class="file-info" id="audio-file-info">No file selected</div>
+                            </div>
+                            
+                            <div class="form-group file-upload">
+                                <label for="cover-image">
+                                    <i class="fas fa-file-image"></i>
+                                    <span>Choose Cover Image</span>
+                                    <input type="file" id="cover-image" name="cover" accept=".jpg,.jpeg,.png">
+                                </label>
+                                <div class="file-info" id="cover-file-info">No file selected</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="reset" class="cancel-btn">
+                                <i class="fas fa-times"></i>
+                                <span>Cancel</span>
+                            </button>
+                            <button type="submit" class="upload-btn pulse">
+                                <i class="fas fa-upload"></i>
+                                <span>Upload</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="upload-status glass-card animated-card" id="upload-status">
+                    <h3>Upload Status <span class="sparkle">💾</span></h3>
+                    <div class="status-content">
+                        <p>Ready to upload your next hit!</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="admin-content hidden" id="manage-section">
+                <div class="manage-header">
+                    <h2>Manage Tracks <span class="sparkle">🎼</span></h2>
+                    <div class="search-box">
+                        <input type="text" id="track-search" placeholder="Search tracks...">
+                        <button id="search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+                
+                <div class="tracks-table glass-card animated-card">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cover</th>
+                                    <th>Title</th>
+                                    <th>Artist</th>
+                                    <th>Upload Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tracks-table-body">
+                                <!-- Tracks will be loaded dynamically -->
+                                <tr>
+                                    <td colspan="5" class="loading-tracks">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <p>Loading tracks...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="pagination">
+                    <button class="page-btn disabled" id="prev-page"><i class="fas fa-chevron-left"></i></button>
+                    <span class="page-info">Page <span id="current-page">1</span> of <span id="total-pages">1</span></span>
+                    <button class="page-btn disabled" id="next-page"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <div class="modal-overlay hidden" id="delete-modal">
+        <div class="modal glass-card animated-modal">
+            <div class="modal-header">
+                <h3>Confirm Deletion <span class="sparkle">⚠️</span></h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this track? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" id="cancel-delete">Cancel</button>
+                <button class="confirm-delete-btn" id="confirm-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification-container" id="notification-container"></div>
+    
+    <script src="js/main.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // File input handlers
+            document.getElementById('audio-file').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                document.getElementById('audio-file-info').textContent = file ? file.name : 'No file selected';
+            });
+            
+            document.getElementById('cover-image').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                document.getElementById('cover-file-info').textContent = file ? file.name : 'No file selected';
+            });
+
+            // Load tracks when manage section is shown
+            document.querySelector('[data-section="manage"]').addEventListener('click', function() {
+                loadTracksTable();
+            });
+        });
+    </script>
+</body>
+</html>
